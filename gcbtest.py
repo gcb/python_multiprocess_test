@@ -24,25 +24,15 @@ class GCBTest():
 		self.mpq_ui = MP.Queue() # messages to the children...
 		self.mpq_fs = MP.Queue()
 		self.mpq_net = MP.Queue()
-		self.mpt_ui = MP.Process( target=self.start_t_ui, args=(self.mpq_main, self.mpq_ui) )#all processes will share the main queue
+		self.mpt_ui = MP.Process( target=gcbtestui.GCBTestUI, args=(self.mpq_main, self.mpq_ui) )#all processes will share the main queue
 		self.mpt_ui.start();
 		# TODO should we also call .join() here to not have memory leaks?
-		self.mpt_fs = MP.Process( target=self.start_t_fs, args=(self.mpq_main, self.mpq_fs) )
+		self.mpt_fs = MP.Process( target=gcbtestfs.GCBTestFS, args=(self.mpq_main, self.mpq_fs) )
 		self.mpt_fs.start();
-		self.mpt_net = MP.Process( target=self.start_t_net, args=(self.mpq_main, self.mpq_net) )
+		self.mpt_net = MP.Process( target=gcbtestnet.GCBTestNET, args=(self.mpq_main, self.mpq_net) )
 		self.mpt_net.start();
 		# when all is started up, kick our main loop
 		return self.check_queue()
-
-	def start_t_ui(self, qin, qout):
-		""" start the UI thread/class in its own thread. @return reference """
-		self.UI = gcbtestui.GCBTestUI(qin, qout);
-	def start_t_fs(self, qin, qout):
-		""" start the local filesystem thread/class in its own thread. @return reference """
-		self.FS = gcbtestfs.GCBTestFS(qin, qout);
-	def start_t_net(self, qin, qout):
-		""" start the network client thread/class in its own thread. @return reference """
-		self.NET = gcbtestnet.GCBTestNET(qin, qout);
 
 	x = 1
 	def check_queue(self):
