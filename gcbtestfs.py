@@ -39,7 +39,7 @@ class GCBTestFS():
 		if DEBUG_MULTI_PROCESS:
 			print( 'FS: check' )
 		#
-		sleep(.5)
+		sleep(.1)
 		return self.check_queue()
 	
 	def primes(self):

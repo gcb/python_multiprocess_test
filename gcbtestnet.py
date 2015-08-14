@@ -16,5 +16,5 @@ class GCBTestNET():
 	def check_queue(self):
 		""" check the main multiprocess message queue for network actions """
 		# TODO check the queue
-		sleep(1)
+		sleep(0.1)
 		self.check_queue()

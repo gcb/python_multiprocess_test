@@ -43,7 +43,7 @@ class GCBTestUI():
 		if DEBUG_MULTI_PROCESS:
 			print("UI check")
 		#
-		return self.tk_root.after(500, self.check_queue) # UI changes can wait .5 sec to be checked
+		return self.tk_root.after(100, self.check_queue) # UI changes can wait .5 sec to be checked
 
 	# every _draw_X method should wipe out the tk_root of anything and then start adding
 	# its own widgets to draw the expected window
