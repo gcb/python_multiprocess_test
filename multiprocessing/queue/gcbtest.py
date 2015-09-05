@@ -20,6 +20,17 @@ PY3 = sys.version_info[0] == 3
 class GCBTest():
 	# mpq_main - the main queue of the program. this is what the controller (here) will use to know what is going on
 	def __init__(self):
+		try:
+			cpus = MP.cpu_count()
+			if DEBUG_MULTI_PROCESS:
+				print( 'CONTROL: found %d CPUs' % cpus )
+			#<if
+		except NotImplementedError:
+			if DEBUG_MULTI_PROCESS:
+				print( 'CONTROL: cannot detect number of CPUs. assuming one.' )
+				cpus = 1
+			#<if
+		#<except
 		self.mpq_main = MP.Queue() # where we, the controller, receive messages
 		self.mpq_ui = MP.Queue() # messages to the children...
 		self.mpq_fs = MP.Queue()
@@ -33,32 +44,38 @@ class GCBTest():
 		self.mpt_net.start();
 		# when all is started up, kick our main loop
 		return self.check_queue()
+	#<def
 
 	x = 1
 	def check_queue(self):
 		self.x += 1
 		if self.x == 5:
 			self.mpq_ui.put('draw A')
-		#
+		#<if
 		if self.x == 10:
 			self.mpq_fs.put('test 1')
 			self.mpq_fs.put('test 2')
-		#
+		#<if
 		if DEBUG_MULTI_PROCESS:
 			print( 'CONTROL: check' )
+		#<if
 		if not self.mpq_main.empty(): #work around retarded Queue vs multiprocess namespace for exceptions
 			msg = self.mpq_main.get(0) # todo handle a list in case we have arguments. or maybe another queue for data?
 			# Check contents of message and do what it says
 			if DEBUG_MULTI_PROCESS:
 				print( 'CONTROL: ', msg )
+			#<if
 			if msg == 'UI quit':
 				self.do_polite_quit()
+			#<if
 		else:
 			pass
+		#<if
 		#
 		# TODO: check if all threads are still up
 		sleep(.5)
 		return self.check_queue()
+	#<def
 	
 	def do_polite_quit(self):
 		# TODO: be polite
@@ -66,7 +83,9 @@ class GCBTest():
 		self.mpt_fs.terminate()
 		self.mpt_net.terminate()
 		sys.exit()
-
+	#<def
+#<class
 
 if __name__ == '__main__':
         theclass = GCBTest()
+#<if
